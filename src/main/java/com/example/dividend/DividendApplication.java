@@ -1,5 +1,8 @@
 package com.example.dividend;
 
+import com.example.dividend.model.Company;
+import com.example.dividend.model.ScrapedResult;
+import com.example.dividend.scraper.YahooFinanceScraper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,6 +18,12 @@ public class DividendApplication {
 
     public static void main(String[] args) {
 //        SpringApplication.run(DividendApplication.class, args);
+
+        YahooFinanceScraper scraper = new YahooFinanceScraper();
+
+        // YahooFinanceScraper.scrap() 실행 테스트
+        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
+        System.out.println(result);
 
 //         //스크래핑 test
 //         dividendInfoScrapingTest();
