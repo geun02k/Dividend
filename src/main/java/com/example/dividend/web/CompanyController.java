@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/company")
@@ -20,7 +22,9 @@ public class CompanyController {
     // 회사검색 자동완성
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        // trie에서 keyword로 시작하는 회사 목록 검색
+        List<String> result = this.companyService.autocomplete(keyword);
+        return ResponseEntity.ok(result);
     }
 
     // 회사 배당금정보 조회
@@ -39,6 +43,9 @@ public class CompanyController {
         }
 
         Company company = this.companyService.save(ticker);
+
+        // 자동검색을 위한 trie에 회사명 저장
+        this.companyService.addAutocompleteKeyword(company.getName());
 
         // 회사정보(company) 반환
         return ResponseEntity.ok(company);

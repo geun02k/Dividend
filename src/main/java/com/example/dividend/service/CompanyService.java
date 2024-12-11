@@ -8,6 +8,7 @@ import com.example.dividend.persist.entity.CompanyEntity;
 import com.example.dividend.persist.entity.DividendEntity;
 import com.example.dividend.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyService {
 
+    private final Trie trie;
     // Scraper 인터페이스로 YahooFinanceScraper 구현체를 의존성주입해 사용
     private final Scraper yahooFinanceScraper;
 
@@ -41,6 +43,29 @@ public class CompanyService {
     public Page<CompanyEntity> getAllCompany(Pageable pageable) {
         Page<CompanyEntity> companyEntityList = this.companyRepository.findAll(pageable);
         return companyEntityList;
+    }
+
+    /** 자동검색 - keyword 저장
+     * : trie 자료구조에 자동조회를 위한 회사명 키워드 저장 */
+    public void addAutocompleteKeyword(String keyword) {
+        this.trie.put(keyword, null);
+    }
+
+    /** 자동검색 - keyword 검색
+     *  : trie에서 keyword로 시작하는 회사명 조회 */
+    public List<String> autocomplete(String keyword) {
+        // trie에서 keyword에 맞는 회사명들 찾아서 List형태로 반환
+        return (List<String>) this.trie.prefixMap(keyword).keySet()
+                .stream()
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+
+    /** 자동검색 - keyword 삭제
+     *  : trie에 저장된 keyword 삭제
+     *  - 추후 deleteCompany api 생성 시 해당 회사 제거에 사용 */
+    public void deleteAutocompleteKeyword(String keyword) {
+        this.trie.remove(keyword);
     }
 
     // 회사와 배당금정보 scraping -> 저장
@@ -67,8 +92,8 @@ public class CompanyService {
 
         List<DividendEntity> dividendEntities =
                 scrapedResult.getDividendEntities().stream()
-                    .map(e -> new DividendEntity(companyEntity.getId(), e))
-                    .collect(Collectors.toList());
+                        .map(e -> new DividendEntity(companyEntity.getId(), e))
+                        .collect(Collectors.toList());
 
         this.dividendRepository.saveAll(dividendEntities);
 
