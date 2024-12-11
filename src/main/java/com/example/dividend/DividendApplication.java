@@ -2,6 +2,7 @@ package com.example.dividend;
 
 import com.example.dividend.model.Company;
 import com.example.dividend.model.ScrapedResult;
+import com.example.dividend.scraper.Scraper;
 import com.example.dividend.scraper.YahooFinanceScraper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -19,12 +20,14 @@ public class DividendApplication {
     public static void main(String[] args) {
 //        SpringApplication.run(DividendApplication.class, args);
 
-        YahooFinanceScraper scraper = new YahooFinanceScraper();
+//        // service에 의존 -> 인터페이스에 의존하도록 변경 (재사용, 확장성 고려)
+//        //YahooFinanceScraper scraper = new YahooFinanceScraper();
+        Scraper scraper = new YahooFinanceScraper();
 
-//        // YahooFinanceScraper.scrap() 실행 테스트
-//        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
-//        System.out.println(result);
-//
+        // YahooFinanceScraper.scrap() 실행 테스트
+        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
+        System.out.println(result);
+
         // YahooFinanceScraper.scrapCompanyByTicker() 실행 테스트
         Company company = scraper.scrapCompanyByTicker("MMM");
         System.out.println(company.toString());
