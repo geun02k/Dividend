@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class YahooFinanceScraper {
+public class YahooFinanceScraper implements Scraper {
     private static final long START_TIME = 86400; // 하루24시간을 sec로 표현 (60초 * 60분 * 24시간)
     // 기존 url -> https://finance.yahoo.com/quote/COKE/history/
     //              ?frequency=1mo
@@ -34,6 +34,7 @@ public class YahooFinanceScraper {
             "https://finance.yahoo.com/quote/%s";
 
     /** 회사코드에 대한 배당금내역 스크래핑 */
+    @Override
     public ScrapedResult scrap(Company company) {
         ScrapedResult scrapedResult = new ScrapedResult();
         scrapedResult.setCompany(company);
@@ -107,6 +108,7 @@ public class YahooFinanceScraper {
     }
 
     /** 회사코드(ticker)를 받아 해당 회사의 메타정보를 scraping으로 가져와 결과로 반환 */
+    @Override
     public Company scrapCompanyByTicker(String ticker) {
         String url = String.format(SUMMARY_URL, ticker);
 
