@@ -21,10 +21,14 @@ public class DividendApplication {
 
         YahooFinanceScraper scraper = new YahooFinanceScraper();
 
-        // YahooFinanceScraper.scrap() 실행 테스트
-        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
-        System.out.println(result);
-
+//        // YahooFinanceScraper.scrap() 실행 테스트
+//        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
+//        System.out.println(result);
+//
+        // YahooFinanceScraper.scrapCompanyByTicker() 실행 테스트
+        Company company = scraper.scrapCompanyByTicker("MMM");
+        System.out.println(company.toString());
+//
 //         //스크래핑 test
 //         dividendInfoScrapingTest();
     }
