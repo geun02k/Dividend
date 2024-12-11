@@ -446,6 +446,20 @@ public class YahooFinanceScraper {
                 때문에 직접 구현하려면 많은 공수가 필요하지만 스프링부트에서 지원하는 Pageable을 사용해 구현하게 되면
                 단순한 기능보다 핵심적인 기능에 집중해 더 완성도있는 서비스를 제공할 수 있다.
 
+
+
+
+
+=============================== << CompanyRepository.java >> ===============================
+< Optional로 wrapping된 형태를 return 값으로 사용하는 이유 >
+ex) Optional<CompanyEntity> findByName(String name);
+    1. NullPointException 방지
+    2. 값이 존재하지 않는 경우의 예외처리를 코드적으로 깔끔하게 처리가능
+
+
+
+
+
 =============================== << 환경설정 >> ===============================
 lombok을 추가해줬는데 실행이 안되면
 File > Settings > Build, Exception, Deployment > Compiler > Annotation Processors > Enable annotation processing 이 체크되어있는지 확인
