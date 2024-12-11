@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -127,9 +128,15 @@ public class YahooFinanceScraper implements Scraper {
                     .get();
 
             // 2. HTML 문서를 파싱 -> Document instance 생성
-            Element h1Tag = document.getElementsByTag("h1").get(1);
-            String title = h1Tag.text()
-                    .substring(0, h1Tag.text().lastIndexOf(" ("))
+            Element titleInfo;
+            Elements h1TagElements = document.getElementsByTag("h1");
+            if(ObjectUtils.isEmpty(h1TagElements) || h1TagElements.size() < 2) {
+                throw new RuntimeException("해당 회사에 대한 정보가 존재하지 않습니다. (" + ticker + ")");
+            } else {
+                titleInfo = h1TagElements.get(1);
+            }
+            String title = titleInfo.text()
+                    .substring(0, titleInfo.text().lastIndexOf(" ("))
                     .replace("\"", "");
 
             return Company.builder()
