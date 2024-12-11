@@ -1,5 +1,6 @@
 package com.example.dividend.persist.entity;
 
+import com.example.dividend.model.Company;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -20,4 +21,10 @@ public class CompanyEntity {
     private String ticker;
 
     private String name;
+
+    // 생성자를 통해 model -> entity로 변환
+    public CompanyEntity(Company company) {
+        this.ticker = company.getTicker();
+        this.name = company.getName();
+    }
 }
