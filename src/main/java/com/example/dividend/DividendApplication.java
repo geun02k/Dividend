@@ -14,23 +14,23 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
 
-//@SpringBootApplication
+@SpringBootApplication
 public class DividendApplication {
 
     public static void main(String[] args) {
-//        SpringApplication.run(DividendApplication.class, args);
+        SpringApplication.run(DividendApplication.class, args);
 
 //        // service에 의존 -> 인터페이스에 의존하도록 변경 (재사용, 확장성 고려)
 //        //YahooFinanceScraper scraper = new YahooFinanceScraper();
-        Scraper scraper = new YahooFinanceScraper();
-
-        // YahooFinanceScraper.scrap() 실행 테스트
-        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
-        System.out.println(result);
-
-        // YahooFinanceScraper.scrapCompanyByTicker() 실행 테스트
-        Company company = scraper.scrapCompanyByTicker("MMM");
-        System.out.println(company.toString());
+//        Scraper scraper = new YahooFinanceScraper();
+//
+//        // YahooFinanceScraper.scrap() 실행 테스트
+//        ScrapedResult result = scraper.scrap(Company.builder().ticker("COKE").build());
+//        System.out.println(result);
+//
+//        // YahooFinanceScraper.scrapCompanyByTicker() 실행 테스트
+//        Company company = scraper.scrapCompanyByTicker("MMM");
+//        System.out.println(company.toString());
 //
 //         //스크래핑 test
 //         dividendInfoScrapingTest();
