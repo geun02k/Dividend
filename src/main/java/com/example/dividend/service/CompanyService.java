@@ -8,6 +8,8 @@ import com.example.dividend.persist.entity.CompanyEntity;
 import com.example.dividend.persist.entity.DividendEntity;
 import com.example.dividend.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -33,6 +35,12 @@ public class CompanyService {
         }
 
         return this.storeCompanyAndDividend(ticker);
+    }
+
+    /** 회사 목록 조회 */
+    public Page<CompanyEntity> getAllCompany(Pageable pageable) {
+        Page<CompanyEntity> companyEntityList = this.companyRepository.findAll(pageable);
+        return companyEntityList;
     }
 
     // 회사와 배당금정보 scraping -> 저장

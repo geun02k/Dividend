@@ -385,6 +385,67 @@ public class YahooFinanceScraper {
 
 
 
+=============================== << CompanyService.java >> ===============================
+1. getAllCompany() : 회사 목록 조회 서비스
+   - 조회할 회사의 개수는 서비스에서는 수백, 수천개가 넘는다.
+     api 호출에 대한 응답 결과로 이 모든 정보를 조회하는 것은 옳지 않다.
+     요청을 주고 받는 데이터의 수가 클수록 당연히 네트워크의 대역폭도 더 많이 사용해야 하므로
+     서비스 전체에 악영향을 줄 가능성도 높아진다.
+     또한 그렇게 많은 회사 목록을 받는다 하더라도
+     어짜피 클라이언트에서 한번에 보여줄 수 있는 아이템의 개수는 한정되어있다.
+     따라서 적당한 수의 회사 정보만 조회하도록 한다.
+   - Pageable : 페이지 기능을 지원한다.
+              : import org.springframework.data.domain.Pageable;
+              : controller에서 파라미터로 Pageable을 받을 수 있도록 한다.
+                클라이언트에서 페이징 관련 옵션을 추가해 api를 호출할 수 있게 된다.
+                Pageable이 임의로 변경되는 것을 막기위해 final로 선언한다.
+                service에서 JPA repository의 findAll() 메서드 호출 시 인자로 Pageable 객체를 전달한다.
+                단, 반환값은 List<Entity> 타입이 아닌 Page<Entity>로 변경되어야 한다.
+              : 페이지 관련 옵션
+                응답시 회사목록에 추가로 하단에 페이지에 대한 정보도 함께 제공한다.
+                페이지의 사이즈(한 페이지에 출력할 데이터 수)는 default로 20.
+                따라서 사이즈 변수를 파라미터로 넘겨 사이즈 조절도 가능하다.
+                query param으로 사이즈=3, 페이지는 0번째 페이지 출력하도록 전달 url
+                - http://localhost:8080/company?size=3&page=0
+              {
+                  "content": [
+                      {
+                          "id": 1,
+                          "ticker": "MMM",
+                          "name": "3M Company"
+                      },
+                      ...
+                  ],
+                  "pageable": {
+                      "sort": {
+                          "empty": true,
+                          "sorted": false,
+                          "unsorted": true
+                      },
+                      "offset": 0,
+                      "pageNumber": 0,
+                      "pageSize": 20,
+                      "paged": true,
+                      "unpaged": false
+                  },
+                  "last": true,
+                  "totalElements": 4,
+                  "totalPages": 1,
+                  "size": 20,
+                  "number": 0,
+                  "sort": {
+                      "empty": true,
+                      "sorted": false,
+                      "unsorted": true
+                  },
+                  "first": true,
+                  "numberOfElements": 4,
+                  "empty": false
+              }
+              : 페이지 기능은 흔하지만 서비스의 핵심적인 기능은 아니다.
+                때문에 직접 구현하려면 많은 공수가 필요하지만 스프링부트에서 지원하는 Pageable을 사용해 구현하게 되면
+                단순한 기능보다 핵심적인 기능에 집중해 더 완성도있는 서비스를 제공할 수 있다.
+
 =============================== << 환경설정 >> ===============================
 lombok을 추가해줬는데 실행이 안되면
 File > Settings > Build, Exception, Deployment > Compiler > Annotation Processors > Enable annotation processing 이 체크되어있는지 확인
