@@ -14,8 +14,14 @@ import java.io.IOException;
 public class DividendApplication {
 
     public static void main(String[] args) {
-        //SpringApplication.run(DividendApplication.class, args);
+//        SpringApplication.run(DividendApplication.class, args);
 
+//         //스크래핑 test
+//         dividendInfoScrapingTest();
+    }
+
+    // 스크래핑 테스트용 코드
+    private static void dividendInfoScrapingTest() {
         // 스크래핑
         // 스크래핑이 잘 수행되는지를 확인하기 위해 main에서 테스트용으로 구현
         // 실제 개발에서는 이렇게 진행하면 안됨.
