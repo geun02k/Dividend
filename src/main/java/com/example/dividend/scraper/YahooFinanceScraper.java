@@ -105,4 +105,40 @@ public class YahooFinanceScraper {
         }
         return scrapedResult;
     }
+
+    /** 회사코드(ticker)를 받아 해당 회사의 메타정보를 scraping으로 가져와 결과로 반환 */
+    public Company scrapCompanyByTicker(String ticker) {
+        String url = String.format(SUMMARY_URL, ticker);
+
+        try {
+            // 1. HTML 문서 받아오기
+            Connection connect = Jsoup.connect(url);
+            Document document = connect
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
+                    .header("scheme", "https")
+                    .header("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+                    .header("accept-encoding", "gzip, deflate, br")
+                    .header("accept-language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6")
+                    .header("cache-control", "no-cache")
+                    .header("pragma", "no-cache")
+                    .header("upgrade-insecure-requests", "1")
+                    .get();
+
+            // 2. HTML 문서를 파싱 -> Document instance 생성
+            Element h1Tag = document.getElementsByTag("h1").get(1);
+            String title = h1Tag.text()
+                    .substring(0, h1Tag.text().lastIndexOf(" ("))
+                    .replace("\"", "");
+
+            return Company.builder()
+                    .ticker(ticker)
+                    .name(title)
+                    .build();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
