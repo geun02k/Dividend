@@ -10,6 +10,7 @@ import com.example.dividend.scraper.Scraper;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -45,13 +46,28 @@ public class CompanyService {
         return companyEntityList;
     }
 
-    /** 자동검색 - keyword 저장
+    /** 자동검색2 - keyword 저장
+     * : trie 자료구조에 자동조회를 위한 회사명 키워드 저장 */
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        // 10건만 조회되도록 제한
+        Pageable limit = PageRequest.of(0, 10);
+
+        // keyword로 시작하는 회사명 목록 조호 (10건 제한)
+        Page<CompanyEntity> companyEntities =
+                this.companyRepository.findByNameStartingWithIgnoreCase(keyword, limit);
+
+        return companyEntities.stream()
+                .map(e -> e.getName())
+                .collect(Collectors.toList());
+    }
+
+    /** 자동검색1 - keyword 저장
      * : trie 자료구조에 자동조회를 위한 회사명 키워드 저장 */
     public void addAutocompleteKeyword(String keyword) {
         this.trie.put(keyword, null);
     }
 
-    /** 자동검색 - keyword 검색
+    /** 자동검색1 - keyword 검색
      *  : trie에서 keyword로 시작하는 회사명 조회 */
     public List<String> autocomplete(String keyword) {
         // trie에서 keyword에 맞는 회사명들 찾아서 List형태로 반환
@@ -61,7 +77,7 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    /** 자동검색 - keyword 삭제
+    /** 자동검색1 - keyword 삭제
      *  : trie에 저장된 keyword 삭제
      *  - 추후 deleteCompany api 생성 시 해당 회사 제거에 사용 */
     public void deleteAutocompleteKeyword(String keyword) {

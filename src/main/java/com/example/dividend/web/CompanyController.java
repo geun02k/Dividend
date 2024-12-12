@@ -22,8 +22,8 @@ public class CompanyController {
     // 회사검색 자동완성
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        // trie에서 keyword로 시작하는 회사 목록 검색
-        List<String> result = this.companyService.autocomplete(keyword);
+        // DB에서 keyword로 시작하는 회사 목록 검색
+        List<String> result = this.companyService.getCompanyNamesByKeyword(keyword);
         return ResponseEntity.ok(result);
     }
 
@@ -43,9 +43,6 @@ public class CompanyController {
         }
 
         Company company = this.companyService.save(ticker);
-
-        // 자동검색을 위한 trie에 회사명 저장
-        this.companyService.addAutocompleteKeyword(company.getName());
 
         // 회사정보(company) 반환
         return ResponseEntity.ok(company);
