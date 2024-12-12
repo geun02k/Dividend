@@ -1,24 +1,24 @@
 spring:
   application:
-    name: dayone-financial
+    name: dividend-financial
 
-    h2:
-      console:
-        enabled: true
-        path: /h2-console
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
-    jpa:
-      hibernate:
-        ddl-auto: create
-        use-new-id-generator-mappings: false
-      show-sql: true
-      defer-datasource-initialization: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: false
+    show-sql: true
+    defer-datasource-initialization: true
 
-    datasource:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:dividend;DB_CLOSE_DELAY=-1
-      username: sa
-      password:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:dividend;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
 
 scheduler:
   scrap:
