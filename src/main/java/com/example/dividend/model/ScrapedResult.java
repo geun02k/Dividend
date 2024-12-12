@@ -14,10 +14,10 @@ public class ScrapedResult {
 
     // 스크래핑한 배당금 정보목록을 담은 dividendEntities 인스턴스
     // (한 회사는 여러 배당금 정보를 가짐)
-    private List<Dividend> dividendEntities;
+    private List<Dividend> dividends;
 
     // 기본생성자
     public ScrapedResult() {
-        this.dividendEntities = new ArrayList<>();
+        this.dividends = new ArrayList<>();
     }
 }

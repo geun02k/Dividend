@@ -107,7 +107,7 @@ public class CompanyService {
                 .save(new CompanyEntity(company));
 
         List<DividendEntity> dividendEntities =
-                scrapedResult.getDividendEntities().stream()
+                scrapedResult.getDividends().stream()
                         .map(e -> new DividendEntity(companyEntity.getId(), e))
                         .collect(Collectors.toList());
 
