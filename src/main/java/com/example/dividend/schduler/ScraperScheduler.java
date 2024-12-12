@@ -24,7 +24,7 @@ public class ScraperScheduler {
 
     private final Scraper yahooFinanceScraper;
 
-    @Scheduled(cron = "0 0 0 * * * ") // 매일 정각 수행
+    @Scheduled(cron = "${scheduler.scrap.yahoo}") // 매일 정각 수행
     public void yahooFinanceScheduling() {
         log.info("Scraping scheduler is started.");
 
