@@ -9,14 +9,17 @@ import com.example.dividend.persist.entity.DividendEntity;
 import com.example.dividend.scraper.Scraper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-@AllArgsConstructor
 @Slf4j
+@Component
+@EnableCaching
+@AllArgsConstructor
 public class ScraperScheduler {
 
     private final CompanyRepository companyRepository;
@@ -24,6 +27,8 @@ public class ScraperScheduler {
 
     private final Scraper yahooFinanceScraper;
 
+    // 스케줄러가 동작할때마다 캐시 어노테이션에 대한 동작도 함께 수행 -> 캐시 데이터 비우기
+    @CacheEvict(value = "finance", allEntries = true)
     @Scheduled(cron = "${scheduler.scrap.yahoo}") // 매일 정각 수행
     public void yahooFinanceScheduling() {
         log.info("Scraping scheduler is started.");
