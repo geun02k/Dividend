@@ -922,6 +922,22 @@ window용 redis 관련 default 설정정보 파일
    - key : 메소드의 파라미터
    - value : finance
 
+- LocalDateTime 타입 직렬화 불가 에러
+   - 발생에러
+     : com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.example.dividend.model.ScrapedResult["dividends"]->java.util.ArrayList[0]->com.example.dividend.model.Dividend["date"])
+   - 발생원인
+     : RedisCacheConfiguration 에서 Serializer를 지정해 직렬화해주도록 설정했다.
+       여기 따라 다른 객체 타입들은 Serializer를 이용해 직렬화할 수 있었는데
+       LocalDateTime 데이터타입은 바이트화(직렬화) 할 때 어떤 규칙으로 진행할 것인지
+       Serialization에 대한 정의가 되어있지않아 발생한 에러이다.
+   - 해결방법
+     : LocalDateTime에 대해 어떤 데이터 타입으로 직렬화, 역직렬화 할 것인지 따로 지정이 필요하다.
+       해당 데이터를 가지는 데이터의 타입 클래스 Dividend에서
+       LocalDateTime 타입의 변수에 아래의 어노테이션을 추가한다.
+       - @JsonSerialize(using = LocalDateTimeSerializer.class) // 직렬화 시 LocalDateTime 타입을 사용
+       - @JsonDeserialize(using = LocalDateDeserializer.class) // 역직렬화 시 LocalDate 타입 사용
+
+
 
 
 
