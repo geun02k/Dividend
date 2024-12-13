@@ -951,6 +951,78 @@ window용 redis 관련 default 설정정보 파일
       두 방법을 함꼐 사용해도 된다.
       (@NoArgsConstructor만 선언하고 빌더패턴 이용해 객체생성가능)
 
+-
+  - 발생에러
+    2024-12-13 23:57:46.209 ERROR 16600 --- [nio-8080-exec-4] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.data.redis.serializer.SerializationException: Could not read JSON: Unexpected token (VALUE_NUMBER_INT), expected END_ARRAY: Expected array to end
+     at [Source: (byte[])"{"@class":"com.example.dividend.model.ScrapedResult","company":{"@class":"com.example.dividend.model.Company","ticker":"COKE","name":"Coca-Cola Consolidated, Inc."},"dividends":["java.util.ArrayList",[{"@class":"com.example.dividend.model.Dividend","date":[1987,2,18,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,5,20,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,8,20,0,0],"dividend":"0.22"},{"@class":"com.example.divide"[truncated 13392 bytes]; line: 1, column: 268] (through reference chain: com.example.dividend.model.ScrapedResult["dividends"]->java.util.ArrayList[0]->com.example.dividend.model.Dividend["date"]); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Unexpected token (VALUE_NUMBER_INT), expected END_ARRAY: Expected array to end
+     at [Source: (byte[])"{"@class":"com.example.dividend.model.ScrapedResult","company":{"@class":"com.example.dividend.model.Company","ticker":"COKE","name":"Coca-Cola Consolidated, Inc."},"dividends":["java.util.ArrayList",[{"@class":"com.example.dividend.model.Dividend","date":[1987,2,18,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,5,20,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,8,20,0,0],"dividend":"0.22"},{"@class":"com.example.divide"[truncated 13392 bytes]; line: 1, column: 268] (through reference chain: com.example.dividend.model.ScrapedResult["dividends"]->java.util.ArrayList[0]->com.example.dividend.model.Dividend["date"])] with root cause
+    com.fasterxml.jackson.databind.exc.MismatchedInputException: Unexpected token (VALUE_NUMBER_INT), expected END_ARRAY: Expected array to end
+     at [Source: (byte[])"{"@class":"com.example.dividend.model.ScrapedResult","company":{"@class":"com.example.dividend.model.Company","ticker":"COKE","name":"Coca-Cola Consolidated, Inc."},"dividends":["java.util.ArrayList",[{"@class":"com.example.dividend.model.Dividend","date":[1987,2,18,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,5,20,0,0],"dividend":"0.22"},{"@class":"com.example.dividend.model.Dividend","date":[1987,8,20,0,0],"dividend":"0.22"},{"@class":"com.example.divide"[truncated 13392 bytes]; line: 1, column: 268] (through reference chain: com.example.dividend.model.ScrapedResult["dividends"]->java.util.ArrayList[0]->com.example.dividend.model.Dividend["date"])
+  - 에러원인
+    : 강의에서는 LocalDateTime 타입 직렬화 불가 에러를 해결하면서 해당문제가 발생하지 않았다.
+      Dividend model에서 LocalDateTime의 데이터인 date를
+      LocalDateTimeSerializer.class를 통해 직렬화 해 Redis Cache 서버에 해당 데이터를 저장을 하고
+      LocalDateDeserializer.class를 통해 역직렬화 해 Redis Cache 서버에서 해당 데이터를 읽어왔다.
+      동일하게 수행했지만 오류가 발생했다.
+  - 해결방법
+      동일 상황에서 문제 해결이 되지않아 검색도 해보고 하다가 해결방법을 찾지못하고
+      에러문구를 계속 읽어보았다.
+      바인드 데이터 미스매치 에러이고, 예기치못한 배열의 끝이라고 하니까
+      혹시 데이터 타입을 잘못 맞춰줬을까해서
+      인텔리제이 자동완성 기능을 통해 LocalDate까지 검색하니 LocalDateDeserializer.class 외
+      LocalDateTimeDeserializer.class 라고 JsonSerialize 했을때와 동일 타입으로 보이는 것을 확인하게 되어
+      수정하였더니 해결되었다.
+
+- 처음 배당금 데이터를 요청하면 DB에 데이터를 요청해 select문이 사용되는 것 확인가능
+  Hibernate: select companyent0_.id as id1_0_, companyent0_.name as name2_0_, companyent0_.ticker as ticker3_0_ from company companyent0_ where companyent0_.name=?
+  Hibernate: select dividenden0_.id as id1_1_, dividenden0_.company_id as company_2_1_, dividenden0_.date as date3_1_, dividenden0_.dividend as dividend4_1_ from dividend dividenden0_ where dividenden0_.company_id=?
+- 두번째로 동일 배당금 데이터 요청 시 http 요청 응답 속도는 이전보다 훨씬 빨라지고
+  Redis Cache에서 데이터를 가져오기 때문에 DB에 요청을 보내지 않는다.
+
+
+< Redis Client에서 캐싱정보 확인하기 >
+127.0.0.1:6379> keys *
+1) "finance::Coca-Cola Consolidated, Inc."
+2) "key"
+127.0.0.1:6379> get "finance::Coca-Cola Consolidated, Inc."
+"{
+    \"@class\":\"com.example.dividend.model.ScrapedResult\",
+    \"company\":{
+        \"@class\":\"com.example.dividend.model.Company\",
+        \"ticker\":\"COKE\",
+        \"name\":\"Coca-Cola Consolidated, Inc.\"
+    },
+    \"dividends\":[
+        \"java.util.ArrayList\",
+        [
+            {
+                \"@class\":\"com.example.dividend.model.Dividend\",
+                \"date\":[1987,2,18,0,0],
+                \"dividend\":\"0.22\"
+            },
+            {
+                \"@class\":\"com.example.dividend.model.Dividend\",
+                \"date\":[1987,5,20,0,0],
+                \"dividend\":\"0.22\"
+            },
+            ...
+        ]
+    ]
+}"
+
+
+< Redis Client에서 캐싱정보 삭제하기 >
+스프링부트와 Redis 서버는 별개의 시스템이기 때문에
+스프링부트를 재실행한다고 해서 Redis 서버까지 재실행되지는 않는다.
+Redis 서버는 여전히 죽지않고 가동되고 있는 상태이다.
+따라서 스프링부트 재시작 시, h2 DB에는 회사, 배당금정보가 제거된 상태인데
+Redis 서버에는 Cache 데이터가 존재하는 상태이므로
+Redis 서버의 Cache 데이터를 삭제해 주어야 한다.
+
+127.0.0.1:6379> del "finance::Coca-Cola Consolidated, Inc."
+(integer) 1
+
+
 
 
 
