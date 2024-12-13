@@ -26,6 +26,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Redis 사용을 위한 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // Api 호출 시 401 에러 발생 가능성으로 인한 임시 제거
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
     // 스크래핑을 위한 라이브러리 (https://jsoup.org/apidocs에서 api문서 확인가능)
