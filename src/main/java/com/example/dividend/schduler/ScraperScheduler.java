@@ -2,6 +2,7 @@ package com.example.dividend.schduler;
 
 import com.example.dividend.model.Company;
 import com.example.dividend.model.ScrapedResult;
+import com.example.dividend.model.constants.CacheKey;
 import com.example.dividend.persist.CompanyRepository;
 import com.example.dividend.persist.DividendRepository;
 import com.example.dividend.persist.entity.CompanyEntity;
@@ -28,7 +29,7 @@ public class ScraperScheduler {
     private final Scraper yahooFinanceScraper;
 
     // 스케줄러가 동작할때마다 캐시 어노테이션에 대한 동작도 함께 수행 -> 캐시 데이터 비우기
-    @CacheEvict(value = "finance", allEntries = true)
+    @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true)
     @Scheduled(cron = "${scheduler.scrap.yahoo}") // 매일 정각 수행
     public void yahooFinanceScheduling() {
         log.info("Scraping scheduler is started.");

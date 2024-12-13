@@ -3,6 +3,7 @@ package com.example.dividend.service;
 import com.example.dividend.model.Company;
 import com.example.dividend.model.Dividend;
 import com.example.dividend.model.ScrapedResult;
+import com.example.dividend.model.constants.CacheKey;
 import com.example.dividend.persist.CompanyRepository;
 import com.example.dividend.persist.DividendRepository;
 import com.example.dividend.persist.entity.CompanyEntity;
@@ -27,7 +28,7 @@ public class FinanceService {
     // @Cacheable
     // : 해당 key값에 대한 Cache 데이터가 Redis Cache에 존재하지 않을 경우 -> 아래의 서비스를 실행
     //   데이터가 존재하는 경우 아래의 서비스 미실행 -> Cahce에 있는 데이터 반환.
-    @Cacheable(key = "#companyName", value = "finance")
+    @Cacheable(key = "#companyName", value = CacheKey.KEY_FINANCE)
     public ScrapedResult getDividendByCompanyName(String companyName) {
         // Redis Cache 서버에서 데이터를 가져올 때는 해당 로그 출력되지 않음.
         log.info("search company -> " + companyName);
