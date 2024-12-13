@@ -1,10 +1,12 @@
 package com.example.dividend.model;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data // getter, setter, toString, equalHashcode, requiredArgsConstructor 어노테이션을 포함한다.
-@Builder //
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Company {
 
     private String ticker;

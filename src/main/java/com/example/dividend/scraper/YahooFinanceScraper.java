@@ -94,10 +94,8 @@ public class YahooFinanceScraper implements Scraper {
 
                 // LocalDateTime date = LocalDateTime.of(2020,5,13,6,30)
                 // 숫자 -> LocalDateTime 시간으로 변경
-                dividends.add(Dividend.builder()
-                                    .date(LocalDateTime.of(year, month, day, 0, 0))
-                                    .dividend(dividend)
-                                    .build());
+                dividends.add(new Dividend(LocalDateTime.of(year, month, day, 0, 0)
+                                          , dividend));
                 //System.out.println(year + "/" + month + "/" + day + "->" + dividend);
             }
             scrapedResult.setDividends(dividends);
@@ -139,10 +137,7 @@ public class YahooFinanceScraper implements Scraper {
                     .substring(0, titleInfo.text().lastIndexOf(" ("))
                     .replace("\"", "");
 
-            return Company.builder()
-                    .ticker(ticker)
-                    .name(title)
-                    .build();
+            return new Company(ticker, title);
 
         } catch (IOException e) {
             e.printStackTrace();
