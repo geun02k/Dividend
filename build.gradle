@@ -28,12 +28,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     // Redis 사용을 위한 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    // Api 호출 시 401 에러 발생 가능성으로 인한 임시 제거
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // 스크래핑을 위한 라이브러리 (https://jsoup.org/apidocs에서 api문서 확인가능)
     implementation 'org.jsoup:jsoup:1.7.2'
     // apache trie 자료구조 사용을 위한 라이브러리
     implementation 'org.apache.commons:commons-collections4:4.3'
+    // 회원관리를 JWT 토큰을 통해 관리하기 위한 라이브러리
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
     runtimeOnly 'com.h2database:h2'
 
