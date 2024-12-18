@@ -1,0 +1,17 @@
+< 배당금프로젝트 - 간단하게 축약한 회원관리 >
+회원관리기능은 security 패키지에서 관리한다.
+
+
+=============================== << 스프링 시큐리티 >> ===============================
+UserDetails
+UserDetailsService
+
+
+- @ElementCollection
+  : 1:N의 매핑으로 테이블에 데이터가 저장.
+  - 참고 블로그 : https://velog.io/@thsruddl77/Basic-attribute-type-should-not-be-a-container
+- PasswordEncoder
+
+
+
+
