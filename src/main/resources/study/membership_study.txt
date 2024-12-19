@@ -64,6 +64,15 @@
      - .and()
         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+5. Controller에 인증권한부여
+   - @PreAuthorize("hasRole('WRITE')")
+     : SecurityConfiguration.java에 @EnableGlobalMethodSecurity(prePostEnabled = true) 적용으로
+       컨트롤러에서 권한직접부여 가능.
+     : 해당 어노테이션을 Controller에 추가 시 쓰기 권한이 있는 유저만 해당 api 호출가능.
+     : hasRole()에는 Authority.java 파일에서 권한정의 시 작성해준 값에서 ROLE_ 를 제외한 문자열작성.
+       ('ROLE_'이라는 prefix로 권한을 시작하는 이유는 스프링 시큐리티가 지원하는 기능들을 쓰기 위함임.)
+   - 권한이 없는 사용자가 해당 api 호출 시 403 (Forbidden)에러 출력됨.
+
 
 
 
