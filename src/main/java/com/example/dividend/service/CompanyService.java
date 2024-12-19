@@ -40,14 +40,32 @@ public class CompanyService {
         return this.storeCompanyAndDividend(ticker);
     }
 
+    /** 회사 및 배당금 정보 삭제 */
+    public String deleteCompany(String ticker) {
+        // 회사 존재여부 확인
+        CompanyEntity company = this.companyRepository.findByTicker(ticker)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+
+        // 배당금 내역 삭제
+        this.dividendRepository.deleteAllByCompanyId(company.getId());
+        // 회사 정보 삭제
+        this.companyRepository.delete(company);
+
+        // 자동검색1 사용하는 경우
+        // : 회사 정보가 삭제되면 자동검색1에 사용되던 trie 공간의 데이터도 삭제 필요.
+        this.deleteAutocompleteKeyword(company.getName());
+
+        return company.getName();
+    }
+
     /** 회사 목록 조회 */
     public Page<CompanyEntity> getAllCompany(Pageable pageable) {
         Page<CompanyEntity> companyEntityList = this.companyRepository.findAll(pageable);
         return companyEntityList;
     }
 
-    /** 자동검색2 - keyword 저장
-     * : trie 자료구조에 자동조회를 위한 회사명 키워드 저장 */
+    /** 자동검색2 - keyword 조회
+     * : DB에서 keywoard로 시작하는 회사명 조회 */
     public List<String> getCompanyNamesByKeyword(String keyword) {
         // 10건만 조회되도록 제한
         Pageable limit = PageRequest.of(0, 10);
@@ -115,4 +133,5 @@ public class CompanyService {
 
         return company;
     }
+
 }
