@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -93,6 +94,7 @@ public class TokenProvider {
      * @param jwt JWT 토큰
      * @return Authentication 스프링에서 지원해주는 형태의 토큰 반환
      */
+    @Transactional
     public Authentication getAuthentication(String jwt) {
         UserDetails userDetails =
                 this.memberService.loadUserByUsername(this.getUsername(jwt));

@@ -73,6 +73,26 @@
        ('ROLE_'이라는 prefix로 권한을 시작하는 이유는 스프링 시큐리티가 지원하는 기능들을 쓰기 위함임.)
    - 권한이 없는 사용자가 해당 api 호출 시 403 (Forbidden)에러 출력됨.
 
+6. api 호출시 인증관련 에러해결
+   - 발생에러
+     : org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.example.dividend.persist.entity.MemberEntity.roles, could not initialize proxy - no Session
+       	at org.hibernate.collection.internal.AbstractPersistentCollection.throwLazyInitializationException(AbstractPersistentCollection.java:606) ~[hibernate-core-5.4.32.Final.jar:5.4.32.Final]
+       	at org.hibernate.collection.internal.AbstractPersistentCollection.withTemporarySessionIfNeeded(AbstractPersistentCollection.java:218) ~[hibernate-core-5.4.32.Final.jar:5.4.32.Final]
+       	at org.hibernate.collection.internal.AbstractPersistentCollection.initialize(AbstractPersistentCollection.java:585) ~[hibernate-core-5.4.32.Final.jar:5.4.32.Final]
+       	at org.hibernate.collection.internal.AbstractPersistentCollection.read(AbstractPersistentCollection.java:149) ~[hibernate-core-5.4.32.Final.jar:5.4.32.Final]
+       	at org.hibernate.collection.internal.PersistentBag.iterator(PersistentBag.java:387) ~[hibernate-core-5.4.32.Final.jar:5.4.32.Final]
+       	at java.base/java.util.Spliterators$IteratorSpliterator.estimateSize(Spliterators.java:1821) ~[na:na]
+       	at java.base/java.util.Spliterator.getExactSizeIfKnown(Spliterator.java:408) ~[na:na]
+       	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:483) ~[na:na]
+       	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:474) ~[na:na]
+       	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:913) ~[na:na]
+       	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234) ~[na:na]
+       	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:578) ~[na:na]
+       	at com.example.dividend.persist.entity.MemberEntity.getAuthorities(MemberEntity.java:40) ~[main/:na]
+       	at com.example.dividend.security.TokenProvider.getAuthentication(TokenProvider.java:103) ~[main/:na]
+   - 해결방법 : role은 호출 시 여러정보를 가져오는 list 형태이기에 호출부에 @Transactional 어노테이션을 추가해줘야한다.
+   - 도움받은 블로그 : https://velog.io/@chocochip/failed-to-lazily-initialize-a-collection-of-role-%EC%97%90%EB%9F%AC
+
 
 
 
