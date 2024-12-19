@@ -24,6 +24,12 @@ public class MemberService implements UserDetailsService { // UserDetailsService
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 사용자인증
+     * @param username the username identifying the user whose data is required.
+     * @return UserDetails 사용자정보
+     * @throws UsernameNotFoundException
+     */
     // loadUserByUsername() : 스프링 시큐리티 기능을 사용하기위한 필수구현 메서드
     // UserDetails 반환타입
     // : memberRepository.findByUsername() 메서드의 반환타입은 Optional<MemberEntity>이다.
@@ -53,4 +59,16 @@ public class MemberService implements UserDetailsService { // UserDetailsService
         return result;
     }
 
+    /** 로그인검증 */
+    public MemberEntity authenticate(Auth.SignIn member) {
+        MemberEntity user =
+                this.memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 ID 입니다."));
+
+        if(!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return user;
+    }
 }

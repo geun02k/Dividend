@@ -7,6 +7,13 @@ import java.util.List;
 
 public class Auth {
 
+    // 로그인 시 사용을 위한 innerClass 생성
+    @Data
+    public static class SignIn {
+        private String username;
+        private String password;
+    }
+
     // 회원가입 시 사용을 위한 innerClass 생성
     @Data
     public static class SignUp {

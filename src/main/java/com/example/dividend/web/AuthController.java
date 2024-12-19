@@ -26,4 +26,18 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
+    // 로그인 API
+    @PostMapping("/signin")
+    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
+        // 1. 아이디, 패스워드 일치여부 확인
+        MemberEntity member = this.memberService.authenticate(request);
+
+        // 2. 토큰생성
+        String token = this.tokenProvider.generateToken(
+                member.getUsername(), member.getRoles());
+
+        // 3. 토큰반환
+        return ResponseEntity.ok(token);
+    }
+
 }
