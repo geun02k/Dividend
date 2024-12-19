@@ -33,6 +33,37 @@
      따라서 컨트롤러 실행 전의 request. 컨트롤러 실행 후 응답 시 response를 가공가능.
      So, 컨트롤러에 요청이 들어올 때 마다 사용자토큰의 포함여부, 유효성 여부 등 확인가능.
 
+4. SecurityConfiguration.java
+   - 스프링 시큐리티 설정정보.
+   - WebSecurityConfigurerAdapter 상속받아 구현.
+   - @EnableWebSecurity 어노테이션 적용필수.
+   - @EnableGlobalMethodSecurity(prePostEnabled = true)
+     : configure() 메서드에서 http.antMatches().gasRole()을 통해
+       특정 권한을 가진 사람만 해당 경로에 접근할 수 있도록 설정가능하지만
+       hasRole() 권한체크를 해당 설정파일 외부에서 어노테이션으로 처리가능하도록 하기위해 추가하는 어노테이션.
+       (해당 어노테이션을 사용해 '필요권한설정'을 해당 설정파일에서 모두 부여하지않고
+        실제 권한을 적용할 컨트롤러에서 직접설정 가능하도록 한다.)
+
+   - rest api로 JWT 토큰 인증방식을 구현 시 설정필수
+     1. 사용하지 않을 부분에 대한 disable 처리
+        - http.httpBasic().disable().csrf().disable()
+     2. session stateless 처리
+        : 로그인을 session이 아닌 JWT 토큰으로 구현했기에 상태정보를 저장하지 않는 stateless 특징가짐.
+          (세션으로 구현시에는 상태를 가지고 jwt 토큰을 이용해 구현시 상태를 가지지않음.)
+        - sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+   - permitAll()
+     : 해당경로에 대해 인증없이 무조건적으로 권한허용.
+     : 회원가입, 로그인의 경우는 토큰없이 접근가능해야함. (JWT 토큰은 로그인 후 생성되므로.)
+     - .and()
+        .authorizeRequests()
+        .antMatchers("/**/signup", "/**/signin").permitAll()
+
+   - addFilterBefore() : 필터의 실행 순서 정의
+     - UsernamePasswordAuthenticationFilter.class : 스프링에서 정의되어있는 필터
+     - .and()
+        .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 
 
