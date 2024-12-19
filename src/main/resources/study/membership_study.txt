@@ -3,14 +3,35 @@
 
 
 =============================== << 스프링 시큐리티 >> ===============================
-UserDetails
-UserDetailsService
-
-
 - @ElementCollection
   : 1:N의 매핑으로 테이블에 데이터가 저장.
   - 참고 블로그 : https://velog.io/@thsruddl77/Basic-attribute-type-should-not-be-a-container
+
 - PasswordEncoder
+
+
+< 스프링 시큐리티를 이용한 로그인 (최소한의) 인증 구현 >
+1. 사용자 Entity (MemberEntity.java)
+   - 인증 시 사용할 Entity.
+   - UserDetails 인터페이스 구현.
+
+2. 로그인인증 Service (MemberService.java)
+   - 인증 시 사용할 서비스.
+   - UserDetailsService 인터페이스 구현.
+   - loadUserByUsername() 메서드 필수구현.
+
+3. JwtAuthenticationFilter.java
+   - 인증필터구현
+   - OncePerRequestFilter 상속받아 생성.
+   - doFilterInternal() 메서드 필수구현.
+   - 사용자가 signup, signin api를 호출했을 때 바로 해당 컨트롤러로 요청이 들어오는 것은 아니다.
+     컨트롤러로 요청이 들어오기 전에 제일 먼저 필터를 거치게 된다.
+     ( 컨트롤러 요청 -> 필터 -> 서블릿 -> 인터셉터 -> aop layer를 거친 후 컨트롤러 호출.
+       응답을 내보낼 때는 위의 과정을 반대로 거쳐 내보낸다. )
+     OncePerRequestFilter 라는 필터를 정의해주게 되면 모든 요청이 올 때 마다 (한 요청당 한 번)
+     필터 실행.
+     따라서 컨트롤러 실행 전의 request. 컨트롤러 실행 후 응답 시 response를 가공가능.
+     So, 컨트롤러에 요청이 들어올 때 마다 사용자토큰의 포함여부, 유효성 여부 등 확인가능.
 
 
 
@@ -62,13 +83,14 @@ UserDetailsService
 
 
 
-< 암호화 알고리즘 >
+=============================== << 암호화 알고리즘 >> ===============================
 평문 : 암호화 전 해독가능한 상태
 암호문 : 암호화된 형태의 메시지
 암호화(encryption) : 평문 -> 암호문
 복호화(decryption) : 암호문 -> 평문
 대칭키 : 동일키를 이용한 암,복호화시 대칭키를 사용한다고 한다.
 비대칭키 : 메시지를 암,복호화하는 키가 다르면 비대칭키를 쓰는 알고리즘을 사용한 것이다.
+
 
 
 

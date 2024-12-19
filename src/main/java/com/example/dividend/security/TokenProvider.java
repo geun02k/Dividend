@@ -1,5 +1,6 @@
 package com.example.dividend.security;
 
+import com.example.dividend.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -7,6 +8,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +25,8 @@ public class TokenProvider {
     private static final String KEY_ROLES = "roles";
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 1 hour
 
+    private final MemberService memberService;
+
     @Value("{spring.jwt.secret}")
     private String secretKey;
 
@@ -28,7 +34,7 @@ public class TokenProvider {
      * 토큰 생성(발급)
      * @param username 사용자명(사용자아이디)
      * @param roles 사용자권한 목록
-     * @return
+     * @return JWT 토큰
      */
     public String generateToken(String username, List<String> roles) {
         // Claims : 사용자 권한정보를 저장하기위한 Claims 생성
@@ -51,7 +57,11 @@ public class TokenProvider {
         return this.parseClaims(token).getSubject();
     }
 
-    // 토큰 유효성 확인 (만료여부확인)
+    /**
+     * 토큰 유효성 검증 (만료여부확인)
+     * @param token 토큰값
+     * @return true/false
+     */
     public boolean validateToken(String token) {
         // 토큰값이 비어있으면 유효하지 않은 토큰 -> false 반환
         if(!StringUtils.hasText(token)) return false;
@@ -63,7 +73,7 @@ public class TokenProvider {
         return !claims.getExpiration().before(new Date());
     }
 
-    // 생성된 토큰이 유효한지 확인 (토큰으로부터 클레임정보 가져오기)
+    // 생성된 토큰 유효성 검증 (토큰으로부터 클레임정보 가져오기)
     private Claims parseClaims(String token) {
         try {
             // 클레임정보 가져오기
@@ -77,4 +87,19 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+    /**
+     * JWT토큰정보 -> 스프링시큐리티 인증정보로 변환
+     * @param jwt JWT 토큰
+     * @return Authentication 스프링에서 지원해주는 형태의 토큰 반환
+     */
+    public Authentication getAuthentication(String jwt) {
+        UserDetails userDetails =
+                this.memberService.loadUserByUsername(this.getUsername(jwt));
+        // 스프링에서 지원해주는 형태의 토큰으로 변경.
+        // 유저정보, 빈값, 권한정보 전달.
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, "", userDetails.getAuthorities());
+    }
+
 }
