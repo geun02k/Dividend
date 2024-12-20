@@ -36,6 +36,8 @@ public class AuthController {
         String token = this.tokenProvider.generateToken(
                 member.getUsername(), member.getRoles());
 
+        log.info("user login -> " + request.getUsername());
+
         // 3. 토큰반환
         return ResponseEntity.ok(token);
     }
