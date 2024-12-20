@@ -1,5 +1,6 @@
 package com.example.dividend.service;
 
+import com.example.dividend.exception.impl.NoCompanyException;
 import com.example.dividend.model.Company;
 import com.example.dividend.model.ScrapedResult;
 import com.example.dividend.persist.CompanyRepository;
@@ -44,7 +45,7 @@ public class CompanyService {
     public String deleteCompany(String ticker) {
         // 회사 존재여부 확인
         CompanyEntity company = this.companyRepository.findByTicker(ticker)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+                .orElseThrow(() -> new NoCompanyException());
 
         // 배당금 내역 삭제
         this.dividendRepository.deleteAllByCompanyId(company.getId());
