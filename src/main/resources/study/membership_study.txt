@@ -386,8 +386,13 @@ Git에서는 commit, push 외에도 굉장히 다양한 기능들을 제공한�
     신규 feature 기능을 이슈에 작성하기도 한다.
     commit 시 이슈넘버 입력 시 자동으로 해당 커밋은 이슈와 연결되어 기록된다.
     구현해야할 내용, 이슈내용을 등록해놓으면 해당 관련 기록들을 훨씬 빨리 찾아볼 수 있다.
+    단순히 commit 메시지를 남기는 것 보다 이슈를 남겨서 commit 기록과 연동해 사용하면
+    commit 내용이 구체적으로 어떤 이슈가 있어서 개발하게 된 것인지,
+    신규 feature는 어떤 내용이고 버그는 어떤 문제가 있었는지 잘 관리할 수 있다.
+    또한 이슈의 하단에서 추가 코멘트를 작성해 협업에 활용할 수 있다.
 
-
+- 참고 블로그
+  : https://velog.io/@dumbveloper_100/GitHub%EC%9C%BC%EB%A1%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC-Issue-Project-Milestone
 
 
 
