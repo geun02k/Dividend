@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <!-- 변수값 설정 -->
-    <property name="LOG_DIR" value="./" /> <!-- 로그 디렉토리 경로 지정 -->
+    <property name="LOG_DIR" value="./log/" /> <!-- 로그 디렉토리 경로 지정 -->
     <property name="LOG_FILE_NAME" value="mylog"/> <!-- 로그 파일명 지정 -->
 
     <!-- Console Appender : 콘솔에 남길 로그 정의 -->
