@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- 변수값 설정 -->
+    <property name="LOG_DIR" value="./" /> <!-- 로그 디렉토리 경로 지정 -->
+    <property name="LOG_FILE_NAME" value="mylog"/> <!-- 로그 파일명 지정 -->
+
+    <!-- Console Appender : 콘솔에 남길 로그 정의 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 로그 출력 패턴 설정 -->
+        <encoder>
+            <!-- %d{yyyy-MM-dd HH:mm:ss.SSS} : 날짜표현
+                 %highlight(%-5level) : 로그레벨표현
+                 %magenta(%-4relative) - - - [ %thread{10} ] %cyan(%logger{36}) - %msg%n : 어디서 발생한 로그인지 패턴표현 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- [ %thread{10} ] %cyan(%logger{20}) : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender : 파일에 남길 로그 정의 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 파일명과 경로설정 -->
+        <file>${LOG_DIR}/${LOG_FILE_NAME}.log</file>
+        <!-- 파일의 Rolling 정책 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- ${LOG_DIR}/ : 로그파일 경로
+                 ${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log.pz : 파일명
+                 .gz, .zip 등을 넣으면 자동 일자별 로그파일 압축.
+                 날짜가 바뀔때마다 로그파일을 새로 생성한다. -->
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log.pz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 파일당 최고 용량
+                     : 파일이 10MB 이상이되면 기존 로그파일이 롤링되면서 새로운 파일을 생성해 로그 쌓기 -->
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 파일 최대 보관기간 = 30일 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <!-- 로그 출력 패턴 설정 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <!-- 각 패키지별 파일에 출력할 시작 로그레벨 결정.
+         : level="info"로 작성하게되면 debug레벨의 로그는 제외하고 info레벨부터 출력. -->
+    <Logger name="org.springframework" level="info" />
+    <Logger name="org.hibernate" level="info" />
+    <!-- 프로젝트의 루트 경로에서 발생하는 에러는 console, file에 에러를 남긴다. -->
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
